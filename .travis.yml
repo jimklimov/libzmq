@@ -8,6 +8,9 @@ os:
 
 dist: trusty
 
+cache:
+- ccache
+
 env:
   matrix:
     - BUILD_TYPE=default CURVE=tweetnacl DRAFT=enabled
