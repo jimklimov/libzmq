@@ -884,6 +884,23 @@ MAINTAINERCLEANFILES = \
 
 @CODE_COVERAGE_RULES@
 
+# Note: analysis is not a target executed by default, so there is no
+# safety-net for the "cppcheck.xml" recipe; there is one for the wrapper.
+# A developer is expected to install tools in build environment, if needed.
+# The results can be used to produce some statistics how project quality
+# changes over many builds (with a relevant Jenkins plugin, for example).
+if WITH_CPPCHECK
+cppcheck: cppcheck.xml
+else
+cppcheck:
+	@echo "NOT ENABLED: cppcheck static analysis. Please install the toolkit and reconfigure, and/or make cppcheck.xml directly."
+endif
+
+cppcheck.xml:
+	@echo "Performing cppcheck static analysis..."
+	cppcheck --enable=all --inconclusive --xml --xml-version=2 . 2>"$@"
+	@echo "The cppcheck static analysis is done"
+
 dist-hook:
 	-rm $(distdir)/src/platform.hpp
 	@if test -d "$(srcdir)/.git"; \

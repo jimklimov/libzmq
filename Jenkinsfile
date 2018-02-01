@@ -164,9 +164,27 @@ pipeline {
                     steps {
                         dir("tmp/test-cppcheck") {
                             deleteDir()
-                            unstash 'prepped'
-                            sh 'cppcheck --std=c++11 --enable=all --inconclusive --xml --xml-version=2 . 2>cppcheck.xml'
-                            archiveArtifacts artifacts: '**/cppcheck.xml'
+                            script {
+                                // We need a configured source codebase to run
+                                // "make", any variant will do. Save some time
+                                // by using a build tree (if exists), but can
+                                // fall back to running the configure script
+                                // explicitly.
+                                if ( params.DO_BUILD_WITH_DRAFT_API ) {
+                                    unstash 'built-draft'
+                                } else if ( params.DO_BUILD_WITHOUT_DRAFT_API ) {
+                                    unstash 'built-nondraft'
+                                } else if ( params.DO_BUILD_DOCS || params.DO_DIST_DOCS ) {
+                                    unstash 'built-docs'
+                                } else {
+                                    unstash 'prepped'
+                                    sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; ./configure --enable-drafts=no --with-docs=no'
+                                }
+                            }
+                            sh 'rm -f cppcheck.xml'
+                            // This make target should produce a cppcheck.xml if tool is available
+                            sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; make cppcheck'
+                            archiveArtifacts artifacts: '**/cppcheck.xml', allowEmptyArchive: true
                             sh 'rm -f cppcheck.xml'
                             script {
                                 if ( params.DO_CLEANUP_AFTER_BUILD ) {
