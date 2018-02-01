@@ -198,12 +198,12 @@ pipeline {
                     when { expression { return ( params.DO_BUILD_WITH_DRAFT_API && params.DO_TEST_CHECK ) } }
                     steps {
                       dir("tmp/test-check-withDRAFT") {
-                        deleteDir()
-                        unstash 'built-draft'
                         script {
                          def RETRY_NUMBER = 0
                          retry(3) {
                           RETRY_NUMBER++
+                          deleteDir()
+                          unstash 'built-draft'
                           timeout (time: "${params.USE_TEST_TIMEOUT}".toInteger(), unit: 'MINUTES') {
                            try {
                             sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; LD_LIBRARY_PATH="`pwd`/src/.libs:$LD_LIBRARY_PATH"; export LD_LIBRARY_PATH; make LD_LIBRARY_PATH="$LD_LIBRARY_PATH" check'
@@ -230,12 +230,12 @@ pipeline {
                     when { expression { return ( params.DO_BUILD_WITHOUT_DRAFT_API && params.DO_TEST_CHECK ) } }
                     steps {
                       dir("tmp/test-check-withoutDRAFT") {
-                        deleteDir()
-                        unstash 'built-nondraft'
                         script {
                          def RETRY_NUMBER = 0
                          retry(3) {
                           RETRY_NUMBER++
+                          deleteDir()
+                          unstash 'built-nondraft'
                           timeout (time: "${params.USE_TEST_TIMEOUT}".toInteger(), unit: 'MINUTES') {
                            try {
                             sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; LD_LIBRARY_PATH="`pwd`/src/.libs:$LD_LIBRARY_PATH"; export LD_LIBRARY_PATH; make LD_LIBRARY_PATH="$LD_LIBRARY_PATH" check'
@@ -262,12 +262,12 @@ pipeline {
                     when { expression { return ( params.DO_BUILD_WITH_DRAFT_API && params.DO_TEST_MEMCHECK ) } }
                     steps {
                       dir("tmp/test-memcheck-withDRAFT") {
-                        deleteDir()
-                        unstash 'built-draft'
                         script {
                          def RETRY_NUMBER = 0
                          retry(3) {
                           RETRY_NUMBER++
+                          deleteDir()
+                          unstash 'built-draft'
                           timeout (time: "${params.USE_TEST_TIMEOUT}".toInteger(), unit: 'MINUTES') {
                            try {
                             sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; LD_LIBRARY_PATH="`pwd`/src/.libs:$LD_LIBRARY_PATH"; export LD_LIBRARY_PATH; make LD_LIBRARY_PATH="$LD_LIBRARY_PATH" memcheck && exit 0 ; echo "Re-running failed ($?) memcheck with greater verbosity" >&2 ; make LD_LIBRARY_PATH="$LD_LIBRARY_PATH" VERBOSE=1 memcheck-verbose'
@@ -294,12 +294,13 @@ pipeline {
                     when { expression { return ( params.DO_BUILD_WITHOUT_DRAFT_API && params.DO_TEST_MEMCHECK ) } }
                     steps {
                       dir("tmp/test-memcheck-withoutDRAFT") {
-                        deleteDir()
-                        unstash 'built-nondraft'
+
                         script {
                          def RETRY_NUMBER = 0
                          retry(3) {
                           RETRY_NUMBER++
+                          deleteDir()
+                          unstash 'built-nondraft'
                           timeout (time: "${params.USE_TEST_TIMEOUT}".toInteger(), unit: 'MINUTES') {
                            try {
                             sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; LD_LIBRARY_PATH="`pwd`/src/.libs:$LD_LIBRARY_PATH"; export LD_LIBRARY_PATH; make LD_LIBRARY_PATH="$LD_LIBRARY_PATH" memcheck && exit 0 ; echo "Re-running failed ($?) memcheck with greater verbosity" >&2 ; make LD_LIBRARY_PATH="$LD_LIBRARY_PATH" VERBOSE=1 memcheck-verbose'
@@ -326,12 +327,12 @@ pipeline {
                     when { expression { return ( params.DO_BUILD_WITH_DRAFT_API && params.DO_TEST_DISTCHECK ) } }
                     steps {
                       dir("tmp/test-distcheck-withDRAFT") {
-                        deleteDir()
-                        unstash 'built-draft'
                         script {
                          def RETRY_NUMBER = 0
                          retry(3) {
                           RETRY_NUMBER++
+                          deleteDir()
+                          unstash 'built-draft'
                           timeout (time: "${params.USE_TEST_TIMEOUT}".toInteger(), unit: 'MINUTES') {
                            try {
                             sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; LD_LIBRARY_PATH="`pwd`/src/.libs:$LD_LIBRARY_PATH"; export LD_LIBRARY_PATH; DISTCHECK_CONFIGURE_FLAGS="--enable-drafts=yes --with-docs=no" ; export DISTCHECK_CONFIGURE_FLAGS; make DISTCHECK_CONFIGURE_FLAGS="$DISTCHECK_CONFIGURE_FLAGS" LD_LIBRARY_PATH="$LD_LIBRARY_PATH" distcheck'
@@ -358,12 +359,12 @@ pipeline {
                     when { expression { return ( params.DO_BUILD_WITHOUT_DRAFT_API && params.DO_TEST_DISTCHECK ) } }
                     steps {
                       dir("tmp/test-distcheck-withoutDRAFT") {
-                        deleteDir()
-                        unstash 'built-nondraft'
                         script {
                          def RETRY_NUMBER = 0
                          retry(3) {
                           RETRY_NUMBER++
+                          deleteDir()
+                          unstash 'built-nondraft'
                           timeout (time: "${params.USE_TEST_TIMEOUT}".toInteger(), unit: 'MINUTES') {
                            try {
                             sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; LD_LIBRARY_PATH="`pwd`/src/.libs:$LD_LIBRARY_PATH"; export LD_LIBRARY_PATH; DISTCHECK_CONFIGURE_FLAGS="--enable-drafts=no --with-docs=no" ; export DISTCHECK_CONFIGURE_FLAGS; make DISTCHECK_CONFIGURE_FLAGS="$DISTCHECK_CONFIGURE_FLAGS" LD_LIBRARY_PATH="$LD_LIBRARY_PATH" distcheck'
